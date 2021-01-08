@@ -58,30 +58,20 @@ public class Source {
 
                switch(choice){
                    case '1':
-                       System.out.println("You Chose 1!");
                        Search(Books, Magazines,Journals);
                        break;
                    case '2':
-                       System.out.println("You Chose 2!");
                        CheckOutItem(Books, Magazines,Journals);
                        break;
                    case '3':
-                       System.out.println("You Chose 3!");
                        returnItem(Books, Magazines,Journals);
                        break;
                    case '4':
-                       System.out.println("You Chose 4!");
                         addItem(Books, Magazines,Journals);
                        break;
                    case '5':
-                       System.out.println("You Chose 5!");
-                       System.out.println(" ");
                        displayInventory(Books, Magazines,Journals);
                        break;
-                   case '6':
-                       System.out.println("You Chose 6!");
-                       break;
-
                }
 
 
@@ -113,11 +103,11 @@ public class Source {
         System.out.println("What Type of Literature are you Adding Today?");
         itemToBeAdded = scanForItem.next();
 
-        if(itemToBeAdded.equals("Book") || itemToBeAdded.equals("book")){
+        if(itemToBeAdded.equals("Book") || itemToBeAdded.equals("book") || itemToBeAdded.equals("Books") || itemToBeAdded.equals("books")){
             addBook(Books);
-        }else if(itemToBeAdded.equals("Magazine") || itemToBeAdded.equals("magazine")){
+        }else if(itemToBeAdded.equals("Magazine") || itemToBeAdded.equals("magazine") || itemToBeAdded.equals("Magazines") || itemToBeAdded.equals("magazines")){
             addMagazine(Magazines);
-        }else if(itemToBeAdded.equals("Journal") || itemToBeAdded.equals("journal")){
+        }else if(itemToBeAdded.equals("Journal") || itemToBeAdded.equals("journal") || itemToBeAdded.equals("Journals") || itemToBeAdded.equals("journals")){
             addJournal(Journals);
         }else {
             System.out.println("Invalid Entry, We Only carry Books, Magazines, and Journals");
@@ -127,16 +117,23 @@ public class Source {
     public static void returnItem(Vector<Book> Books, Vector<Magazine> Magazines, Vector<Journal> Journals){
 
         Scanner scanID = new Scanner(System.in);
-        int searchKey;
+        String searchKey;
+        int searchNum;
         System.out.print("Please Enter the Item ID for the Item you are trying to Return: ");
-        searchKey = scanID.nextInt();
+        searchKey = scanID.next();
+        try{
+            searchNum = Integer.parseInt(searchKey);
+        }catch(NumberFormatException e){
+            System.out.println("Invalid Input, Rerouting to Main Menu");
+            return;
+        }
 
-        if(searchKey < 100 || searchKey > 100000){
+        if(searchNum < 100 || searchNum > 100000){
             System.out.println("Invalid Entry");
         }
         //BOOKS
-        else if(searchKey > 99 && searchKey < 1000){
-            Book bookCheckOut = findBook(searchKey,Books);
+        else if(searchNum > 99 && searchNum < 1000){
+            Book bookCheckOut = findBook(searchNum,Books);
             if(bookCheckOut == null){
                 System.out.println("Could Not Find Item With Matching ID");
             }else if(!bookCheckOut.isCheckedOutStatus()){
@@ -147,8 +144,8 @@ public class Source {
             }
         }
         //MAGAZINES
-        else if(searchKey > 999 && searchKey < 10000){
-            Magazine magCheckOut = findMagazine(searchKey,Magazines);
+        else if(searchNum > 999 && searchNum < 10000){
+            Magazine magCheckOut = findMagazine(searchNum,Magazines);
             if(magCheckOut == null){
                 System.out.println("Could Not Find Item With Matching ID");
             }else if(!magCheckOut.isCheckedOutStatus()){
@@ -160,7 +157,7 @@ public class Source {
         }
         //JOURNALS
         else{
-            Journal journalCheckOut = findJournals(searchKey,Journals);
+            Journal journalCheckOut = findJournals(searchNum,Journals);
             if(journalCheckOut == null){
                 System.out.println("Could Not Find Item With Matching ID");
             }else if(!journalCheckOut.isCheckedOutStatus()){
@@ -177,16 +174,23 @@ public class Source {
     public static void CheckOutItem(Vector<Book> Books, Vector<Magazine> Magazines, Vector<Journal> Journals){
 
         Scanner scanID = new Scanner(System.in);
-        int searchKey;
+        String searchKey;
+        int searchNum;
         System.out.print("Please Enter the Item ID for the Item you are trying to Check Out: ");
-        searchKey = scanID.nextInt();
+        searchKey = scanID.next();
+        try{
+            searchNum = Integer.parseInt(searchKey);
+        }catch(NumberFormatException e){
+            System.out.println("Invalid Input, Rerouting to Main Menu");
+            return;
+        }
 
-        if(searchKey < 100 || searchKey > 100000){
-            System.out.println("Invalid Entry");
+        if(searchNum < 100 || searchNum > 100000){
+            System.out.println("Invalid Input, Rerouting to Main Menu");
         }
         //BOOKS
-        else if(searchKey > 99 && searchKey < 1000){
-            Book bookCheckOut = findBook(searchKey,Books);
+        else if(searchNum > 99 && searchNum < 1000){
+            Book bookCheckOut = findBook(searchNum,Books);
             if(bookCheckOut == null){
                 System.out.println("Could Not Find Item With Matching ID");
             }else if(bookCheckOut.isCheckedOutStatus()){
@@ -197,8 +201,8 @@ public class Source {
             }
         }
         //MAGAZINES
-        else if(searchKey > 999 && searchKey < 10000){
-            Magazine magCheckOut = findMagazine(searchKey,Magazines);
+        else if(searchNum > 999 && searchNum < 10000){
+            Magazine magCheckOut = findMagazine(searchNum,Magazines);
             if(magCheckOut == null){
                 System.out.println("Could Not Find Item With Matching ID");
             }else if(magCheckOut.isCheckedOutStatus()){
@@ -210,7 +214,7 @@ public class Source {
         }
         //JOURNALS
         else{
-            Journal journalCheckOut = findJournals(searchKey,Journals);
+            Journal journalCheckOut = findJournals(searchNum,Journals);
             if(journalCheckOut == null){
                 System.out.println("Could Not Find Item With Matching ID");
             }else if(journalCheckOut.isCheckedOutStatus()){
@@ -227,22 +231,28 @@ public class Source {
     public static void addBook(Vector<Book> Books){
 
         Scanner scanForTitle = new Scanner(System.in);
-        Scanner scanForAuther= new Scanner(System.in);
+        Scanner scanForAuthor= new Scanner(System.in);
         String titleToBeAdded;
-        String autherToBeAdded;
+        String authorToBeAdded;
         int ID;
-        System.out.print("Please Enter the Title of the Book: ");
-        titleToBeAdded=scanForTitle.nextLine();
+        try {
+            System.out.print("Please Enter the Title of the Book: ");
+            titleToBeAdded = scanForTitle.nextLine();
+            if(titleToBeAdded.length() == 0){
+                throw new Exception("Invalid Title Entry, Rerouting to Main Menu");
+            }
+            System.out.print("Please Enter the Author of the Book: ");
+            authorToBeAdded=scanForAuthor.nextLine();
+            if(authorToBeAdded.length() == 0){
+                throw new Exception("Invalid Author Entry, Rerouting to Main Menu");
+            }
 
-        System.out.println(titleToBeAdded.length());
+            ID = Books.get((Books.size()-1)).getID() + 1;
 
-        System.out.print("Please Enter the Auther of the Book: ");
-        autherToBeAdded=scanForAuther.nextLine();
-        System.out.println(autherToBeAdded.length());
-
-        ID = Books.get((Books.size()-1)).getID() + 1;
-
-        Books.add(new Book(titleToBeAdded,ID,false,autherToBeAdded));
+            Books.add(new Book(titleToBeAdded,ID,false,authorToBeAdded));
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
 
     }
 
@@ -250,46 +260,67 @@ public class Source {
         Scanner scanForTitle = new Scanner(System.in);
         Scanner scanForIssueNum= new Scanner(System.in);
         String titleToBeAdded;
-        int issueNumToBeAdded;
+        String issueNumToBeAdded;
+        int issueNum;
         int ID;
-        System.out.print("Please Enter the Title of the Magazine: ");
-        titleToBeAdded=scanForTitle.nextLine();
+        try {
+            System.out.print("Please Enter the Title of the Magazine: ");
+            titleToBeAdded = scanForTitle.nextLine();
+            if(titleToBeAdded.length() == 0){
+                throw new Exception("Invalid Title Input");
+            }
 
-        System.out.println(titleToBeAdded.length());
+            System.out.print("Please Enter the Issue Number of the Magazine: ");
+            issueNumToBeAdded = scanForIssueNum.next();
 
-        System.out.print("Please Enter the Issue Number of the Magazine: ");
-        issueNumToBeAdded=scanForIssueNum.nextInt();
+            issueNum = Integer.parseInt(issueNumToBeAdded);
 
-        ID = Magazines.get((Magazines.size()-1)).getID() + 1;
+            ID = Magazines.get((Magazines.size() - 1)).getID() + 1;
 
-        Magazines.add(new Magazine(titleToBeAdded,ID,false,issueNumToBeAdded));
+            Magazines.add(new Magazine(titleToBeAdded, ID, false, issueNum));
+        }catch(NumberFormatException e){
+            System.out.println("Invalid Issue Number Input, Rerouting to Main Menu");
+        }catch(Exception e){
+            System.out.println( e.getMessage() + ", Rerouting to Main Menu");
+        }
     }
 
     public static void addJournal(Vector<Journal> Journals){
         Scanner scanForTitle = new Scanner(System.in);
         Scanner scanForVolNum= new Scanner(System.in);
         String titleToBeAdded;
-        int volNumToBeAdded;
+        String volNumToBeAdded;
+        int volNum;
         int ID;
-        System.out.print("Please Enter the Title of the Journal: ");
-        titleToBeAdded=scanForTitle.nextLine();
+        try {
+            System.out.print("Please Enter the Title of the Journal: ");
+            titleToBeAdded = scanForTitle.nextLine();
+            if(titleToBeAdded.length() == 0){
+                throw new Exception("Invalid Input");
+            }
 
-        System.out.println(titleToBeAdded.length());
+            System.out.println(titleToBeAdded.length());
 
-        System.out.print("Please Enter the Volume Number of the Journal: ");
-        volNumToBeAdded=scanForVolNum.nextInt();
+            System.out.print("Please Enter the Volume Number of the Journal: ");
+            volNumToBeAdded = scanForVolNum.next();
+            volNum = Integer.parseInt(volNumToBeAdded);
 
-        ID = Journals.get((Journals.size()-1)).getID() + 1;
 
-        Journals.add(new Journal(titleToBeAdded,ID,false,volNumToBeAdded));
+            ID = Journals.get((Journals.size() - 1)).getID() + 1;
+
+            Journals.add(new Journal(titleToBeAdded, ID, false, volNum));
+        }catch(NumberFormatException e){
+            System.out.println("Invalid Volume Input, Rerouting to Main Menu");
+        }catch(Exception e){
+
+        }
     }
-
 
     public static Book findBook(int idSearch, Vector<Book> Books){
 
         for (int i = 0; i < Books.size(); i++) {
                 if(idSearch == Books.get(i).getID()){
-                    System.out.println("Found Book");
+                    System.out.println("Found Book : '" + Books.get(i).getTitle()+"'");
                     return Books.get(i);
                 }
         }
@@ -300,7 +331,7 @@ public class Source {
 
         for (int i = 0; i < Magazines.size(); i++) {
             if(idSearch == Magazines.get(i).getID()){
-                System.out.println("Found Magazine");
+                System.out.println("Found Magazine : '" + Magazines.get(i).getTitle()+"'");
                 return Magazines.get(i);
             }
         }
@@ -312,7 +343,7 @@ public class Source {
 
         for (int i = 0; i < Journals.size(); i++) {
             if(idSearch == Journals.get(i).getID()){
-                System.out.println("Found Journal");
+                System.out.println("Found Journal : '" + Journals.get(i).getTitle()+"'");
                 return Journals.get(i);
             }
         }
@@ -338,8 +369,18 @@ public class Source {
             System.out.print("Please Specify the Title of the Book: ");
             titleSearch = scanTitle.nextLine();
 
+            if(titleSearch.length() == 0){
+                System.out.println("Invalid Entry, Rerouting to Main Menu");
+                return;
+            }
+
             System.out.print("Please Specify the Auther of the Book: ");
             autherSearch = scanAuther.nextLine();
+
+            if(autherSearch.length() == 0){
+                System.out.println("Invalid Entry, Rerouting to Main Menu");
+                return;
+            }
 
             for (int i = 0; i < Books.size(); i++) {
 
@@ -363,16 +404,27 @@ public class Source {
         //SEARCHING FOR MAGAZINES
         else if(searchItem.equals("magazine") || searchItem.equals("Magazine") || searchItem.equals("magazines") || searchItem.equals("Magazines")){
 
-            int issueNumSearch;
+            String issueNumSearch;
+            int issueNum;
             Scanner scanIssueNum = new Scanner(System.in);
             Scanner scanTitle = new Scanner(System.in);
             System.out.print("Please specify the Title of the Magazine: ");
             titleSearch = scanTitle.nextLine();
+            if(titleSearch.length() == 0){
+                System.out.println("Invalid Entry, Rerouting to Main Menu");
+                return;
+            }
             System.out.print("Please Specify the Issue Number of the Magazine: ");
-            issueNumSearch = scanIssueNum.nextInt();
+            issueNumSearch = scanIssueNum.next();
+            try{
+                issueNum = Integer.parseInt(issueNumSearch);
+            }catch(NumberFormatException e){
+                System.out.println("Input was Not a Number, Rerouting to Main Menu");
+                return;
+            }
 
             for (int i = 0; i < Magazines.size(); i++) {
-                if(titleSearch.equals(Magazines.get(i).getTitle()) && issueNumSearch == Magazines.get(i).getIssueNumber()){
+                if(titleSearch.equals(Magazines.get(i).getTitle()) && issueNum == Magazines.get(i).getIssueNumber()){
                     System.out.println(" ");
                     System.out.println("The Magazine '" + Magazines.get(i).getTitle() + "', Issue " + Magazines.get(i).getIssueNumber()+ " is in our System");
                     if(Magazines.get(i).isCheckedOutStatus()){
@@ -389,16 +441,27 @@ public class Source {
         //SEARCHING FOR JOURNALS
         else if(searchItem.equals("journal") || searchItem.equals("Journal") || searchItem.equals("journals") || searchItem.equals("Journals")){
 
-            int volumeNumSearch;
+            String volumeNumSearch;
+            int volNum;
             Scanner scanVolumeNum = new Scanner(System.in);
             Scanner scanTitle= new Scanner(System.in);
             System.out.print("Please Specify the Title of the Journal: ");
             titleSearch = scanTitle.nextLine();
+            if(titleSearch.length() == 0){
+                System.out.println("Invalid Entry, Rerouting to Main Menu");
+                return;
+            }
             System.out.print("Please Specify the Volume of the Journal: ");
-            volumeNumSearch = scanVolumeNum.nextInt();
+            volumeNumSearch = scanVolumeNum.next();
+            try{
+                volNum = Integer.parseInt(volumeNumSearch);
+            }catch(NumberFormatException e){
+                System.out.println("Input was Not a Number, Rerouting to Main Menu");
+                return;
+            }
 
             for (int i = 0; i < Journals.size(); i++) {
-                if(titleSearch.equals(Journals.get(i).getTitle()) && volumeNumSearch == Journals.get(i).getVolume()){
+                if(titleSearch.equals(Journals.get(i).getTitle()) && volNum == Journals.get(i).getVolume()){
                     System.out.println(" ");
                     System.out.println("The Journal '" + Journals.get(i).getTitle() + "', Volume " + Journals.get(i).getVolume() + " is in our System");
                     if(Journals.get(i).isCheckedOutStatus()){
